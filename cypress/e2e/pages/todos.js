@@ -1,11 +1,25 @@
 const url = Cypress.env('baseUrl')
 const token = Cypress.env('token')
-export class Comments{
-    getAllComments(){
+export class Todos{
+    getAllTodos(){
         return new Cypress.Promise((resolve, reject) => {
             cy.request({
                 method: 'GET',
-                url: url + '/comments',
+                url: url + '/todos',
+                failOnStatusCode: false,
+                headers:{
+                    'authorization': token
+                }
+            }).then((response) => {
+                resolve(response)
+            })
+        })
+    }
+    getOneTodos(id){
+        return new Cypress.Promise((resolve, reject) => {
+            cy.request({
+                method: 'GET',
+                url: url + '/todos/' + id,
                 failOnStatusCode: false,
                 headers: {
                     'authorization': token
@@ -15,27 +29,13 @@ export class Comments{
             })
         })
     }
-    getOneComment(commentId){
-        return new Cypress.Promise((resolve, reject) => {
-            cy.request({
-                method: 'GET',
-                url: url + '/comments/' + commentId,
-                failOnStatusCode: false,
-                headers: {
-                    'authorization': token
-                }
-            }).then((response) => {
-                resolve(response)
-            })
-        })
-    }
-    createComment(body){
+    createTodos(body){
         return new Cypress.Promise((resolve, reject) => {
             cy.request({
                 method: 'POST',
-                url: url + '/comments',
+                url: url + '/todos',
                 failOnStatusCode: false,
-                headers: {
+                headers:{
                     'authorization': token
                 },
                 body: body
@@ -44,11 +44,11 @@ export class Comments{
             })
         })
     }
-    updateComment(id, body){
+    updateTodos(id, body){
         return new Cypress.Promise((resolve, reject) => {
             cy.request({
                 method: 'PUT',
-                url: url + '/comments/' + id,
+                url: url + '/todos/' + id,
                 failOnStatusCode: false,
                 headers: {
                     'authorization': token
@@ -59,11 +59,11 @@ export class Comments{
             })
         })
     }
-    deleteComment(id){
+    deleteTodos(id){
         return new Cypress.Promise((resolve, reject) => {
             cy.request({
                 method: 'DELETE',
-                url: url + '/comments/' + id,
+                url: url + '/todos/' + id,
                 failOnStatusCode: false,
                 headers: {
                     'authorization': token

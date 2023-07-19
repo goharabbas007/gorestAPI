@@ -2,17 +2,19 @@
 import { Users } from "./pages/usersApi"
 import { Posts } from "./pages/postsApi"
 import { Comments } from "./pages/comments"
+import { Todos } from "./pages/todos"
 
 const userObj = new Users()
 const postObj = new Posts()
 const commentObj = new Comments()
+const todosObj = new Todos()
 
-let userId = ''
 let userName = userObj.randomName()
 let userEmail = userName + '@gmail.com'
 //
 // user requests tests started from here
 //
+let userId = ''
 describe('user get requests', () => {
     it('get all users', async () => {
         const res = await userObj.getAllUsers()
@@ -142,7 +144,7 @@ describe('posts put & delete requests', () => {
     })
 })
 //
-// comments requests tests started from here
+// comments request tests started from here
 //
 let commentId = ''
 describe('comments get requests', () => {
@@ -170,5 +172,77 @@ describe('comments post request', () => {
         const res = await commentObj.createComment(body)
         expect(res.status).to.eq(201)
         expect(res.body.name).eq('Hello')
+    })
+})
+describe('comments put & delete requests', () => {
+    it('update a comment', async () => {
+        const allComments = await commentObj.getAllComments()
+        commentId = allComments.body[0].id
+        postId = allComments.body[0].post_id
+        let body = {
+            post_id: postId,
+            name: 'updated name',
+            email: 'updated@email.com',
+            body: 'udpated body',
+        }
+        const res = await commentObj.updateComment(commentId, body)
+        expect(res.status).to.eq(200)
+    })
+    it('delete a commnet', async () => {
+        const allComments = await commentObj.getAllComments()
+        commentId = allComments.body[0].id
+        const res = await commentObj.deleteComment(commentId)
+        expect(res.status).to.eq(204)
+    })
+})
+//
+// todos requests tests started from here
+//
+let todosId = ''
+describe('todos get requests', () => {
+    it('get all todos', async() => {
+        const res = await todosObj.getAllTodos()
+        expect(res.status).to.eq(200)
+    })
+    it('get one todos', async () => {
+        const allTodos = await todosObj.getAllTodos()
+        todosId = allTodos.body[0].id
+        const res = await todosObj.getOneTodos(todosId)
+        expect(res.status).to.eq(200)
+    })  
+})
+describe('create todos request', () => {
+    it('create new todos', async () => {
+        const allTodos = await todosObj.getAllTodos()
+        userId = allTodos.body[0].user_id
+        let body = {
+            user_id: userId,
+            title: 'newly created',
+            due_on: '2023-08-17T00',
+            status: 'completed'
+        }
+        const res = await todosObj.createTodos(body)
+        expect(res.status).to.eq(201)
+    })
+})
+describe('todos put & delete requests', () => {
+    it('update todos', async () => {
+        const allTodos = await todosObj.getAllTodos()
+        todosId = allTodos.body[0].id
+        userId = allTodos.body[0].user_id
+        let body = {
+            user_id: userId,
+            title: 'updated title',
+            due_on: '2023-08-17T00',
+            status: 'completed'
+        }
+        const res = await todosObj.updateTodos(todosId, body)
+        expect(res.status).to.eq(200)
+    })
+    it('delete todos', async () => {
+        const allTodos = await todosObj.getAllTodos()
+        todosId = allTodos.body[0].id
+        const res = await todosObj.deleteTodos(todosId)
+        expect(res.status).to.eq(204)
     })
 })
